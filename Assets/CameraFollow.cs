@@ -9,15 +9,20 @@ public class CameraFollow : MonoBehaviour
     private Vector3 velocity = Vector3.zero;
     public Transform player;
     Camera camera;
+    GameManager gameManager;
 
     void Start()
     {
+        gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
+
         camera = Camera.main;
     }
 
     // Update is called once per frame
     void Update()
     {
+        if (gameManager.isGameOver || gameManager.isGamePaused) return;
+
         if (player)
         {
             Vector3 point = camera.WorldToViewportPoint(player.position);

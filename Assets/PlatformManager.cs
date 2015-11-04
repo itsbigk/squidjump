@@ -9,6 +9,7 @@ public class PlatformManager : MonoBehaviour
     public float spawnEveryXUnitsMax;
     public float heightOffset;
     public Transform[] platforms;
+    GameManager gameManager;
 
     float lastSpawn;
     float spawnEveryXUnits;
@@ -16,6 +17,7 @@ public class PlatformManager : MonoBehaviour
     // Use this for initialization
     void Start()
     {
+        gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
         lastSpawn = transform.position.y;
         spawnEveryXUnits = Random.Range(spawnEveryXUnitsMin, spawnEveryXUnitsMax);
     }
@@ -23,6 +25,8 @@ public class PlatformManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (gameManager.isGameOver || gameManager.isGamePaused) return;
+
         if (squid.transform.position.y > lastSpawn + spawnEveryXUnits + 0.5f)
         {
             Spawn();
@@ -33,7 +37,12 @@ public class PlatformManager : MonoBehaviour
 
     public void Spawn()
     {
-        var platformprefab = platforms[Random.Range(0, platforms.Length)];
+        var platformprefab = platforms[0];
+
+        if (squid.transform.position.y > 50)
+            platformprefab = platforms[Random.Range(0, platforms.Length - 1)];
+        if (squid.transform.position.y > 100)
+            platformprefab = platforms[Random.Range(0, platforms.Length)];
 
         var location = new Vector3(
             transform.position.x + Random.Range(-maxHorizontalOffset, maxHorizontalOffset),

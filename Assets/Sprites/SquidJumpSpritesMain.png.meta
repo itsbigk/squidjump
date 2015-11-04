@@ -1,6 +1,6 @@
 fileFormatVersion: 2
 guid: 28882d159308d42f6bc893e3d178ec28
-timeCreated: 1446568354
+timeCreated: 1446666153
 licenseType: Free
 TextureImporter:
   fileIDToRecycleName:
@@ -10,6 +10,9 @@ TextureImporter:
     21300006: SquidJumpSpritesMain_3
     21300008: SquidJumpSpritesMain_4
     21300010: SquidJumpSpritesMain_5
+    21300012: SquidJumpSpritesMain_6
+    21300014: SquidJumpSpritesMain_7
+    21300016: SquidJumpSpritesMain_8
   serializedVersion: 2
   mipmaps:
     mipMapMode: 0
@@ -35,7 +38,7 @@ TextureImporter:
   textureFormat: -1
   maxTextureSize: 2048
   textureSettings:
-    filterMode: -1
+    filterMode: 0
     aniso: 16
     mipBias: -1
     wrapMode: 1
@@ -59,7 +62,7 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 1
-        y: 7
+        y: 56
         width: 15
         height: 15
       alignment: 7
@@ -69,7 +72,7 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 23
-        y: 7
+        y: 56
         width: 17
         height: 14
       alignment: 7
@@ -79,7 +82,7 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 45
-        y: 7
+        y: 56
         width: 15
         height: 11
       alignment: 7
@@ -89,7 +92,7 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 64
-        y: 7
+        y: 56
         width: 15
         height: 7
       alignment: 7
@@ -99,7 +102,7 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 82
-        y: 7
+        y: 56
         width: 15
         height: 7
       alignment: 7
@@ -109,11 +112,41 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 100
-        y: 7
+        y: 56
         width: 15
         height: 7
       alignment: 7
       pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: SquidJumpSpritesMain_6
+      rect:
+        serializedVersion: 2
+        x: 2
+        y: 33
+        width: 16
+        height: 15
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: SquidJumpSpritesMain_7
+      rect:
+        serializedVersion: 2
+        x: 3
+        y: 16
+        width: 8
+        height: 8
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: SquidJumpSpritesMain_8
+      rect:
+        serializedVersion: 2
+        x: 13
+        y: 16
+        width: 8
+        height: 8
+      alignment: 0
+      pivot: {x: .5, y: .5}
       border: {x: 0, y: 0, z: 0, w: 0}
   spritePackingTag: 
   userData: 

@@ -8,27 +8,38 @@ public class SquidMovement : MonoBehaviour
     public float AccJumpForcePerFrame;
     public float MaxAccJumpForce;
     public Sprite[] sprites;
+    public AudioClip jumpSound;
+    public AudioClip gameOverSound;
+
     private Rigidbody2D _rigidbody;
     private SpriteRenderer spriteRenderer;
     private float screenWidth;
     private float accJumpForce;
+    GameManager gameManager;
 
     void Start()
     {
+        gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
+
         _rigidbody = GetComponent<Rigidbody2D>();
         spriteRenderer = GetComponent<SpriteRenderer>();
         var dist = (transform.position - Camera.main.transform.position).z;
-        screenWidth = Camera.main.ViewportToWorldPoint(new Vector3(0, 0, dist)).x - 1;
+        screenWidth = Camera.main.ViewportToWorldPoint(new Vector3(0, 0, dist)).x * 2;
+        screenWidth -= screenWidth / 2;
     }
 
     void Update()
     {
+        if (gameManager.isGameOver || gameManager.isGamePaused) return;
+
         transform.position = new Vector2(Mathf.Repeat(transform.position.x, screenWidth), transform.position.y);
     }
 
     bool isTouching = false;
     void FixedUpdate()
     {
+        if (gameManager.isGameOver || gameManager.isGamePaused) return;
+
         if (Input.touchCount > 0)
         {
             if (!isTouching)
@@ -65,12 +76,15 @@ public class SquidMovement : MonoBehaviour
 
     void Jump(float force)
     {
+        GetComponent<AudioSource>().PlayOneShot(jumpSound);
         gameObject.layer = 8;//PlayerInAir Layer
         _rigidbody.AddForce(new Vector2(0f, jumpForce * force), ForceMode2D.Impulse);
     }
 
     void UpdateSprite()
     {
+        if (gameManager.isGameOver || gameManager.isGamePaused) return;
+
         var animProgress = accJumpForce / MaxAccJumpForce;
         var spriteIndex = 0;
         if (animProgress >= 1)
@@ -99,7 +113,7 @@ public class SquidMovement : MonoBehaviour
     int lastSprite = 0;
     IEnumerator AnimateFullPowerSprite()
     {
-        while (isAnimatingFullPowerSprite)
+        while (isAnimatingFullPowerSprite && !gameManager.isGameOver && !gameManager.isGamePaused)
         {
             switch (lastSprite)
             {
@@ -113,13 +127,18 @@ public class SquidMovement : MonoBehaviour
                     break;
             }
 
-            yield return new WaitForSeconds(0.1f);
+            yield return new WaitForSeconds(0.05f);
         }
     }
 
     void OnTriggerEnter2D(Collider2D other)
     {
+        if (gameManager.isGameOver || gameManager.isGamePaused) return;
+
         if (other.name == "Lava")
-            GameObject.Find("GameManager").GetComponent<GameManager>().GameOver();
+        {
+            GetComponent<AudioSource>().PlayOneShot(jumpSound);
+            gameManager.GameOver();
+        }
     }
 }
