@@ -10,7 +10,8 @@ public class SquidMovement : MonoBehaviour
     public Sprite[] sprites;
     public AudioClip jumpSound;
     public AudioClip gameOverSound;
-
+    public AudioClip powerupSound;
+    public GameObject particlesPrefab;
     private Rigidbody2D _rigidbody;
     private SpriteRenderer spriteRenderer;
     private float screenWidth;
@@ -38,7 +39,11 @@ public class SquidMovement : MonoBehaviour
     bool isTouching = false;
     void FixedUpdate()
     {
-        if (gameManager.isGameOver || gameManager.isGamePaused) return;
+        if (gameManager.isGameOver || gameManager.isGamePaused)
+        {
+            SetLayer(9);//Player layer
+            return;
+        }
 
         if (Input.touchCount > 0)
         {
@@ -66,18 +71,18 @@ public class SquidMovement : MonoBehaviour
 
         if (_rigidbody.velocity.y < 0)
         {
-            gameObject.layer = 9;//Player layer
+            SetLayer(9);//Player layer
         }
 
         var movement = Input.acceleration.x;
-        if (Mathf.Abs(movement) > 0.1f)
+        if (_rigidbody.velocity.y != 0 && Mathf.Abs(movement) > 0.1f)
             _rigidbody.AddForce(Vector2.right * movement * movementForce, ForceMode2D.Force);
     }
 
     void Jump(float force)
     {
         GetComponent<AudioSource>().PlayOneShot(jumpSound);
-        gameObject.layer = 8;//PlayerInAir Layer
+        SetLayer(8);//PlayerInAir Layer
         _rigidbody.AddForce(new Vector2(0f, jumpForce * force), ForceMode2D.Impulse);
     }
 
@@ -131,14 +136,54 @@ public class SquidMovement : MonoBehaviour
         }
     }
 
+    float lastParticlesTriggerHeight = 0;
+
     void OnTriggerEnter2D(Collider2D other)
     {
         if (gameManager.isGameOver || gameManager.isGamePaused) return;
 
         if (other.name == "Lava")
         {
-            GetComponent<AudioSource>().PlayOneShot(jumpSound);
+            GetComponent<AudioSource>().PlayOneShot(gameOverSound);
             gameManager.GameOver();
+     
+          } 
+          else if (other.name == "ParticlesTrigger" && lastParticlesTriggerHeight < transform.position.y - 2)
+        {
+            lastParticlesTriggerHeight = transform.position.y;
+            SimplePool.Spawn(particlesPrefab, transform.position + (Vector3.up * 25), Quaternion.identity);
+        }
+        else
+        {
+            var origName = other.name;
+
+            switch (other.tag.ToString())
+            {
+                case "Powerup":
+                    if (origName.Contains("PowerupRedFish"))
+                    {
+                        GetComponent<AudioSource>().PlayOneShot(powerupSound);
+                        SimplePool.Despawn(other.gameObject);
+                        jumpForce = jumpForce * 1.1f;
+                        StartCoroutine("ReduceJumpForceToNormalEventualy");
+                    }
+                    break;
+            }
+        }
+    }
+
+    IEnumerator ReduceJumpForceToNormalEventualy()
+    {
+        yield return new WaitForSeconds(5);
+
+        jumpForce = jumpForce * 0.9f;
+    }
+
+    void SetLayer(int layer){
+    
+        foreach (Transform t in transform.FindChild("Colliders"))
+        {
+            t.gameObject.layer = layer;
         }
     }
 }

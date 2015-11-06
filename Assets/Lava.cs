@@ -20,6 +20,6 @@ public class Lava : MonoBehaviour
     {
         if (gameManager.isGameOver || gameManager.isGamePaused) return;
 
-        transform.position = transform.position + Vector3.up * speed * ((squid.position.y / 100) + 1) * Time.deltaTime;
+        transform.position = transform.position + Vector3.up * speed * Mathf.Clamp((squid.position.y / 100) + 1, 1, 2) * Time.deltaTime;
     }
 }

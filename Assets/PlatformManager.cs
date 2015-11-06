@@ -8,7 +8,11 @@ public class PlatformManager : MonoBehaviour
     public float spawnEveryXUnitsMin;
     public float spawnEveryXUnitsMax;
     public float heightOffset;
-    public Transform[] platforms;
+    public GameObject[] platforms;
+    public GameObject[] powerups;
+    public float[] chance;
+    public float[] minHeight;
+    //  public float[] value;
     GameManager gameManager;
 
     float lastSpawn;
@@ -37,20 +41,49 @@ public class PlatformManager : MonoBehaviour
 
     public void Spawn()
     {
-        var platformprefab = platforms[0];
+        var platform = platforms[0];
 
-        if (squid.transform.position.y > 50)
-            platformprefab = platforms[Random.Range(0, platforms.Length - 1)];
         if (squid.transform.position.y > 100)
-            platformprefab = platforms[Random.Range(0, platforms.Length)];
+            platform = platforms[Random.Range(0, platforms.Length - 2)];
+        if (squid.transform.position.y > 200)
+            platform = platforms[Random.Range(0, platforms.Length - 1)];
+        if (squid.transform.position.y > 300)
+            platform = platforms[Random.Range(0, platforms.Length)];
 
         var location = new Vector3(
             transform.position.x + Random.Range(-maxHorizontalOffset, maxHorizontalOffset),
         lastSpawn + spawnEveryXUnits + heightOffset,
         transform.position.z);
 
-        var new_platform = Instantiate(platformprefab, location, gameObject.transform.rotation) as GameObject;
+        SimplePool.Spawn(platform, location, Quaternion.identity);
+        
+        TrySpawnPowerup();
+    }
 
-        //   new_platform.transform.position.y = new_platform.transform.position.y + Random.Range(2,4);
+    void TrySpawnPowerup()
+    {
+        var random = Random.Range(0, 100);
+
+        for (int i = 0; i < chance.Length; i++)
+        {
+            if (minHeight[i] > squid.transform.position.y) continue;
+
+            if (chance[i] > random)
+            {
+                SpawnPowerup(i);
+            }
+        }
+    }
+
+    void SpawnPowerup(int index)
+    {
+        var prefab = powerups[index];
+
+        var location = new Vector3(
+            transform.position.x + Random.Range(-maxHorizontalOffset, maxHorizontalOffset),
+        lastSpawn + 13,
+        transform.position.z);
+
+        SimplePool.Spawn(prefab, location, Quaternion.identity);
     }
 }
